@@ -17,10 +17,12 @@ const __dirname = path.dirname(__filename);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+import dotenv from 'dotenv';
+dotenv.config(); 
 
-
-mongoose.connect('mongodb+srv://athulkrizzz:ATHULKRISHNA@cluster0.edwpugx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-  .then(() => console.log("MongoDB connected"))
+// mongoose.connect('mongodb+srv://athulkrizzz:ATHULKRISHNA@cluster0.edwpugx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("MongoDB connected"))
   .catch(err => console.error(err));
 
 
