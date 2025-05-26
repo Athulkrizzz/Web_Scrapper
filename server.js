@@ -4,7 +4,10 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import scrapeBooks from './scraper.js';
 import Book from './models/Book.js';
-
+import AppError from './utils/AppError.js';
+import wrapAsync from './utils/wrapAsync.js';
+// const AppError=require('./utils/AppError')
+// const wrapAsync=require('./utils/wrapAsync')
 const app = express();
 
 
@@ -21,16 +24,25 @@ mongoose.connect('mongodb+srv://athulkrizzz:ATHULKRISHNA@cluster0.edwpugx.mongod
   .catch(err => console.error(err));
 
 
-app.get('/', async (req, res) => {
+app.get('/',wrapAsync( async (req, res) => {
   const books = await Book.find();
   res.render('index', { books });
-});
+}));
 
-app.post('/scrape', async (req, res) => {
+app.post('/scrape',wrapAsync(  async (req, res) => {
   const books = await scrapeBooks();
   await Book.deleteMany({});
   await Book.insertMany(books);
   res.redirect('/');
+}));
+
+app.all(/(.*)/, (req, res, next) => {
+    next(new AppError("Page Not Found",404))
+})
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 app.listen(3000,()=>{
