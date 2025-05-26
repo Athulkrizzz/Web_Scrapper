@@ -38,6 +38,12 @@ app.post('/scrape',wrapAsync(  async (req, res) => {
   res.redirect('/');
 }));
 
+app.post('/clear', wrapAsync(async (req, res) => {
+  await Book.deleteMany({});
+  res.redirect('/');
+}));
+
+
 app.all(/(.*)/, (req, res, next) => {
     next(new AppError("Page Not Found",404))
 })
